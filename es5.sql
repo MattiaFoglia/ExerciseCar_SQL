@@ -46,4 +46,11 @@ AND Assicurazioni.Nome = "Sara"
 ;
 -- 10
 SELECT COUNT(*) AS "Numero totale di auto coinvolte in incidenti" FROM AutoCoinvolte
-
+;
+-- 11
+SELECT Sinistro.CodS,Sinistro.Località, Sinistro.Data FROM Auto, Assicurazioni, Sinistro, AutoCoinvolte
+WHERE Auto.CodAss = Assicurazioni.CodAss
+AND AutoCoinvolte.Targa = Auto.Targa
+AND AutoCoinvolte.CodS = Sinistro.CodS
+AND Sinistro.Località = Assicurazioni.sede
+;
