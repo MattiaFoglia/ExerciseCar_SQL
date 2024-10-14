@@ -1,0 +1,109 @@
+CREATE DATABASE AutoDatabase;
+USE AutoDatabase;
+
+
+CREATE TABLE PROPRIETARI (
+    CodF VARCHAR(20) PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    Residenza VARCHAR(255) NOT NULL
+);
+
+
+CREATE TABLE ASSICURAZIONI (
+    CodAss VARCHAR(20) PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    Sede VARCHAR(255) NOT NULL
+);
+
+
+CREATE TABLE AUTO (
+    Targa VARCHAR(10) PRIMARY KEY,
+    Marca VARCHAR(100) NOT NULL,
+    Cilindrata INT NOT NULL,
+    Potenza INT NOT NULL,
+    CodF VARCHAR(20),
+    CodAss VARCHAR(20),
+    FOREIGN KEY (CodF) REFERENCES PROPRIETARI(CodF),
+    FOREIGN KEY (CodAss) REFERENCES ASSICURAZIONI(CodAss)
+);
+
+
+CREATE TABLE SINISTRO (
+    CodS INT AUTO_INCREMENT PRIMARY KEY,
+    Località VARCHAR(100) NOT NULL,
+    Data DATE NOT NULL
+);
+
+
+CREATE TABLE AUTOCOINVOLTE (
+    CodS INT,
+    Targa VARCHAR(10),
+    ImportoDelDanno DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (CodS) REFERENCES SINISTRO(CodS),
+    FOREIGN KEY (Targa) REFERENCES AUTO(Targa),
+    PRIMARY KEY (CodS, Targa)
+);
+
+INSERT INTO PROPRIETARI (CodF, Nome, Residenza) VALUES
+('ABC12345D', 'Mario Rossi', 'Via Roma, 10, Milano'),
+('DEF67890E', 'Giulia Bianchi', 'Corso Italia, 20, Torino'),
+('GHI23456F', 'Luca Verdi', 'Piazza Maggiore, 5, Bologna'),
+('JKL98765M', 'Anna Neri', 'Viale Libertà, 30, Napoli');
+
+-- Ensure the ASSICURAZIONI table has the necessary data
+INSERT INTO ASSICURAZIONI (CodAss, Nome, Sede) VALUES
+('INS001', 'Assicurazioni Generali', 'Milano'),
+('INS002', 'Allianz', 'Torino'),
+('INS003', 'UnipolSai', 'Bologna'),
+('INS004', 'SARA', 'Roma');  -- Add SARA insurance company
+
+-- Ensure the AUTO table has the necessary data
+INSERT INTO AUTO (Targa, Marca, Cilindrata, Potenza, CodF, CodAss) VALUES
+('AB123CD', 'Fiat', 1200, 75, 'ABC12345D', 'INS001'),
+('EF456GH', 'Volkswagen', 1600, 110, 'DEF67890E', 'INS002'),
+('IJ789KL', 'Toyota', 1800, 140, 'GHI23456F', 'INS003'),
+('MN123OP', 'BMW', 2500, 150, 'JKL98765M', 'INS004'),  -- High displacement & power
+('QR456ST', 'Mercedes', 2200, 170, 'JKL98765M', 'INS004');  -- High displacement & power
+
+-- Ensure the SINISTRO table has the necessary data
+INSERT INTO SINISTRO (Località, Data) VALUES
+('Milano', '2024-01-15'),
+('Roma', '2024-02-20'),
+('Bologna', '2024-03-10');
+
+-- Ensure the AUTOCOINVOLTE table has the necessary data
+INSERT INTO AUTOCOINVOLTE (CodS, Targa, ImportoDelDanno) VALUES
+(1, 'MN123OP', 2500.00),  -- BMW involved in accident
+(2, 'QR456ST', 1800.00),  -- Mercedes involved in accident
+(1, 'AB123CD', 1500.00),  -- Fiat involved in accident
+(2, 'EF456GH', 2000.00);   -- Volkswagen involved in accident
+
+-- Additional data for PROPRIETARI
+INSERT INTO PROPRIETARI (CodF, Nome, Residenza) VALUES
+('MNO54321N', 'Paolo Gallo', 'Via Venezia, 15, Firenze'),
+('PQR65432O', 'Sara Rizzi', 'Via Torino, 5, Genova'),
+('STU76543P', 'Marco Neri', 'Viale Europa, 25, Napoli');
+
+-- Additional data for ASSICURAZIONI
+INSERT INTO ASSICURAZIONI (CodAss, Nome, Sede) VALUES
+('INS005', 'AXA', 'Milano'),
+('INS006', 'Generali', 'Torino');
+
+-- Additional data for AUTO
+INSERT INTO AUTO (Targa, Marca, Cilindrata, Potenza, CodF, CodAss) VALUES
+('YZ123AB', 'Audi', 2000, 140, 'MNO54321N', 'INS005'),  -- Meets both conditions
+('CD456EF', 'Honda', 1800, 130, 'PQR65432O', 'INS006'),  -- Meets power condition
+('GH789IJ', 'Peugeot', 1500, 100, 'STU76543P', 'INS001'),  -- Below thresholds
+('KL012MN', 'Nissan', 2400, 160, 'STU76543P', 'INS002');  -- Meets both conditions
+
+-- Additional data for SINISTRO
+INSERT INTO SINISTRO (Località, Data) VALUES
+('Napoli', '2024-04-10'),
+('Firenze', '2024-05-15');
+
+-- Additional data for AUTOCOINVOLTE
+INSERT INTO AUTOCOINVOLTE (CodS, Targa, ImportoDelDanno) VALUES
+(3, 'YZ123AB', 3000.00),  -- Audi involved in accident
+(4, 'CD456EF', 1800.00),  -- Honda involved in accident
+(3, 'GH789IJ', 1200.00),  -- Peugeot involved in accident
+(4, 'KL012MN', 2500.00);   -- Nissan involved in accident
